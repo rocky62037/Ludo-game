@@ -1,0 +1,61 @@
+import random
+
+class Ludo:
+    def __init__(self):
+        self.board = [0] * 52
+        self.players = ['Red', 'Blue', 'Green', 'Yellow']
+        self.positions = {player: 0 for player in self.players}
+        self.home = {player: 0 for player in self.players}
+        self.finish_line = {player: 0 for player in self.players}
+        self.start_positions = {
+            'Red': 1,
+            'Blue': 14,
+            'Green': 27,
+            'Yellow': 40
+        }
+        self.safe_zones = [1, 9, 14, 22, 27, 35, 40, 48]
+        self.finish_positions = {
+            'Red': [51, 52, 53, 54],
+            'Blue': [55, 56, 57, 58],
+            'Green': [59, 60, 61, 62],
+            'Yellow': [63, 64, 65, 66]
+        }
+        self.move_choices = [1, 2, 3, 4, 5, 6]
+
+    def roll_dice(self):
+        return random.choice(self.move_choices)
+
+    def move_piece(self, player):
+        roll = self.roll_dice()
+        current_pos = self.positions[player]
+        new_pos = current_pos + roll
+
+        if new_pos in self.safe_zones:
+            print("Safe Zone!")
+            return
+
+        if new_pos > 52:
+            return
+
+        if new_pos in self.finish_positions[player]:
+            self.finish_line[player] += 1
+            if self.finish_line[player] == 4:
+                print(f"{player} wins!")
+            else:
+                print(f"{player} finishes the game with {self.finish_line[player]} pieces!")
+            return
+
+        if self.board[new_pos] != 0:
+            print("Piece sent back to home!")
+            self.home[player] += 1
+            return
+
+        self.board[current_pos] = 0
+        self.positions[player] = new_pos
+        self.board[new_pos] = 1
+
+    def play(self):
+        while True:
+            for player in self.players:
+                input(f"{player}'s turn, press enter to roll the dice...")
+                self.move_piece(player
